@@ -1,17 +1,26 @@
-package com.example;
+package xyz.kohara.stellarity;
 
 import net.fabricmc.api.ModInitializer;
 import net.minecraft.resources.ResourceLocation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class TemplateMod implements ModInitializer {
+public class Stellarity implements ModInitializer {
     // This logger is used to write text to the console and the log file.
     // It is considered best practice to use your mod id as the logger's name.
     // That way, it's clear which mod wrote info, warnings, and errors.
-    public static final Logger LOGGER = LoggerFactory.getLogger("template");
+    public static final String MOD_ID = "stellarity";
+    public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
     public static final String VERSION = /*$ mod_version*/ "0.1.0";
-    public static final String MINECRAFT = /*$ minecraft*/ "1.21.9";
+    public static final String MINECRAFT = /*$ minecraft*/ "1.21.10";
+
+    public static ResourceLocation of(String path) {
+        //? if = 1.20.1 {
+        /*return new ResourceLocation(MOD_ID, path);
+        *///?} else {
+        return ResourceLocation.fromNamespaceAndPath(MOD_ID, path);
+        //?}
+    }
 
     @Override
     public void onInitialize() {
@@ -21,11 +30,11 @@ public class TemplateMod implements ModInitializer {
 
         LOGGER.info("Hello Fabric world!");
 
-        //? if !release
-        LOGGER.warn("I'm still a template!");
-
         //? if fapi: <0.100
         /*LOGGER.info("Fabric API is old on this version");*/
+
+        StellarityItems.init();
+        StellarityBlocks.init();
     }
 
     /**

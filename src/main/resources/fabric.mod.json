@@ -12,17 +12,23 @@
     "sources": "https://codeberg.org/stonecutter/template-fabric"
   },
   "license": "CC0-1.0",
-  "icon": "assets/template/icon.png",
+  "icon": "assets/stellarity/icon.png",
   "environment": "*",
   "entrypoints": {
     "main": [
-      "com.example.TemplateMod"
+      "xyz.kohara.stellarity.Stellarity"
+    ],
+    "client": [
+      "xyz.kohara.stellarity.StellarityClient"
+    ],
+    "fabric-datagen": [
+      "xyz.kohara.stellarity.StellarityDatagen"
     ]
   },
   "mixins": [
-    "template.mixins.json"
+    "stellarity.mixins.json"
   ],
-  "accessWidener": "template.accesswidener",
+  "accessWidener": "stellarity.accesswidener",
   "depends": {
     "fabricloader": ">=0.17",
     "minecraft": "${minecraft}"
