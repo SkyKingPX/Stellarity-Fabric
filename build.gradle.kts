@@ -81,6 +81,7 @@ java {
 
 tasks {
     processResources {
+        duplicatesStrategy = DuplicatesStrategy.EXCLUDE
         inputs.property("id", project.property("mod.id"))
         inputs.property("name", project.property("mod.name"))
         inputs.property("version", project.property("mod.version"))

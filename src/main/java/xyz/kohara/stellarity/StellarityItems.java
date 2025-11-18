@@ -1,54 +1,66 @@
 package xyz.kohara.stellarity;
 
-import com.mojang.datafixers.types.Func;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.level.block.Block;
 import xyz.kohara.stellarity.item.CallOfTheVoid;
-
 import java.util.function.Function;
 
 public class StellarityItems {
-    //? <= 1.21.1 {
-    public static final Item CALL_OF_THE_VOID = register(new CallOfTheVoid(), "call_of_the_void");
-    public static final Item ENDER_DIRT = register(new BlockItem(StellarityBlocks.ENDER_DIRT, new Item.Properties()), "ender_dirt");
-    public static final Item ENDER_GRASS_BLOCK = register(new BlockItem(StellarityBlocks.ENDER_GRASS_BLOCK, new Item.Properties()), "ender_grass_block");
-    public static final Item ASHEN_FROGLIGHT = register(new BlockItem(StellarityBlocks.ASHEN_FROGLIGHT, new Item.Properties()), "ashen_froglight");
 
-    public static Item register(Item item, String id) {
-        return Registry.register(BuiltInRegistries.ITEM,Stellarity.of(id),item);
+    public static final Item CALL_OF_THE_VOID = register("call_of_the_void", CallOfTheVoid::new, CallOfTheVoid.properties());
+    public static final Item SUSHI = register("sushi", Item::new, new Item.Properties().food(basicFood(4, 2.4f)));
+
+    public static final Item ENDER_DIRT = registerBlock("ender_dirt", StellarityBlocks.ENDER_DIRT);
+    public static final Item ENDER_GRASS_BLOCK = registerBlock("ender_grass_block", StellarityBlocks.ENDER_GRASS_BLOCK);
+    public static final Item ASHEN_FROGLIGHT = registerBlock("ashen_froglight", StellarityBlocks.ASHEN_FROGLIGHT);
+
+    public static Item registerBlock(String name, Block block) {
+        return registerBlock(name, block, new Item.Properties());
     }
-    //?} else {
-    /*public static final Item CALL_OF_THE_VOID = register("call_of_the_void", CallOfTheVoid::new, CallOfTheVoid.properties());
-
-
-    // IMPORTANT: blocks must be registered with useBlockDescriptionPrefix to have correct translation keys
-    public static final Item ENDER_DIRT = register("ender_dirt", props -> new BlockItem(StellarityBlocks.ENDER_DIRT, props), new Item.Properties().useBlockDescriptionPrefix());
-    public static final Item ENDER_GRASS_BLOCK = register("ender_grass_block", props -> new BlockItem(StellarityBlocks.ENDER_GRASS_BLOCK, props), new Item.Properties().useBlockDescriptionPrefix());
-    public static final Item ASHEN_FROGLIGHT = register("ashen_froglight", props -> new BlockItem(StellarityBlocks.ASHEN_FROGLIGHT, props), new Item.Properties().useBlockDescriptionPrefix());
-
-    public static Item register(String name, Function<Item.Properties, Item> itemFactory, Item.Properties settings) {
-        // Create the item key.
+    public static Item registerBlock(String name, Block block, Item.Properties settings) {
         ResourceKey<Item> itemKey = ResourceKey.create(Registries.ITEM, Stellarity.of(name));
+        //? if >= 1.21.9 {
+        settings = settings.useBlockDescriptionPrefix().setId(itemKey);
+        //?}
+        Item item = new BlockItem(block, settings);
 
-        // Create the item instance.
-        Item item = itemFactory.apply(settings.setId(itemKey));
-
-        // Register the item.
         Registry.register(BuiltInRegistries.ITEM, itemKey, item);
 
         return item;
     }
 
-    *///?}
+    public static Item register(String name, Function<Item.Properties, Item> itemFactory) {
+        return register(name, itemFactory, new Item.Properties());
+    }
+    public static Item register(String name, Function<Item.Properties, Item> itemFactory, Item.Properties settings)  {
+        ResourceKey<Item> itemKey = ResourceKey.create(Registries.ITEM, Stellarity.of(name));
+        //? >= 1.21.10 {
+        settings.setId(itemKey);
+        //?}
+
+        Item item = itemFactory.apply(settings);
+        Registry.register(BuiltInRegistries.ITEM, itemKey, item);
+
+        return item;
+    }
+
+    public static FoodProperties basicFood(int nutrition, float saturation) {
+        return new FoodProperties.Builder()
+                .nutrition(nutrition)
+                //? = 1.20.1
+                /*.saturationMod(saturation)*/
+                //? >= 1.21.1
+                .saturationModifier(saturation)
+                .build();
+    }
 
     public static void init() {
         Stellarity.LOGGER.info("Registering Stellarity Items");
     }
-
-
 }
