@@ -14,5 +14,6 @@ public class StellarityClient implements ClientModInitializer {
         Stellarity.LOGGER.info("Stellarity Client Initializing");
 
         StellarityModels.init();
+        StellarityCreativeModeTabs.init();
     }
 }

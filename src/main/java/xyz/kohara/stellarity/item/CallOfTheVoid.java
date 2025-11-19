@@ -21,5 +21,6 @@ public class CallOfTheVoid extends BowItem {
         super(properties);
     }
 
+
     //TODO
 }
