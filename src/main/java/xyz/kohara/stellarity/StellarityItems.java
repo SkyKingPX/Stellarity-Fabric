@@ -12,9 +12,9 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import xyz.kohara.stellarity.item.*;
 //? >= 1.21.9 {
-import net.minecraft.world.item.component.Consumables;
+/*import net.minecraft.world.item.component.Consumables;
 import net.minecraft.world.item.consume_effects.ApplyStatusEffectsConsumeEffect;
-//?}
+*///?}
 
 
 import java.util.function.Function;
@@ -31,10 +31,10 @@ public class StellarityItems {
     public static final Item GRILLED_ENDERMAN_FLESH = register("grilled_enderman_flesh", Item::new, new Item.Properties().food(basicFood(6, 9.6f)));
     public static final Item FLAREFIN_KOI = register("flarefin_koi", Item::new,
             //? >= 1.21.9 {
-            new Item.Properties().food(basicFood(4, 0.8f), Consumables.defaultFood().onConsume(new ApplyStatusEffectsConsumeEffect(new MobEffectInstance(MobEffects.FIRE_RESISTANCE, 16*20), 1.0f)).build()));
-            //?} else {
-            /*new Item.Properties().food(partialFood(4, 0.8f).effect(new MobEffectInstance(MobEffects.FIRE_RESISTANCE, 16*20), 1.0f).build()));
-            *///?}
+            /*new Item.Properties().food(basicFood(4, 0.8f), Consumables.defaultFood().onConsume(new ApplyStatusEffectsConsumeEffect(new MobEffectInstance(MobEffects.FIRE_RESISTANCE, 16*20), 1.0f)).build()));
+            *///?} else {
+            new Item.Properties().food(partialFood(4, 0.8f).effect(new MobEffectInstance(MobEffects.FIRE_RESISTANCE, 16*20), 1.0f).build()));
+            //?}
 
 
     public static final Item ENDER_DIRT = registerBlock("ender_dirt", StellarityBlocks.ENDER_DIRT);
@@ -48,8 +48,8 @@ public class StellarityItems {
     public static Item registerBlock(String name, Block block, Item.Properties settings) {
         ResourceKey<Item> itemKey = ResourceKey.create(Registries.ITEM, Stellarity.of(name));
         //? if >= 1.21.9 {
-        settings = settings.useBlockDescriptionPrefix().setId(itemKey);
-        //?}
+        /*settings = settings.useBlockDescriptionPrefix().setId(itemKey);
+        *///?}
         Item item = new BlockItem(block, settings);
 
         Registry.register(BuiltInRegistries.ITEM, itemKey, item);
@@ -64,8 +64,8 @@ public class StellarityItems {
     public static Item register(String name, Function<Item.Properties, Item> itemFactory, Item.Properties settings) {
         ResourceKey<Item> itemKey = ResourceKey.create(Registries.ITEM, Stellarity.of(name));
         //? >= 1.21.10 {
-        settings.setId(itemKey);
-        //?}
+        /*settings.setId(itemKey);
+        *///?}
 
         Item item = itemFactory.apply(settings);
         Registry.register(BuiltInRegistries.ITEM, itemKey, item);
@@ -81,16 +81,16 @@ public class StellarityItems {
         var builder = new FoodProperties.Builder()
                 .nutrition(nutrition)
                 //? = 1.20.1
-                /*.saturationMod(saturation);*/
+                .saturationMod(saturation);
                 //? >= 1.21.1
-                .saturationModifier(saturation);
+                /*.saturationModifier(saturation);*/
 
         if (alwaysEat) {
             builder =
             //? = 1.20.1
-                    /*builder.alwaysEat();*/
+                    builder.alwaysEat();
             //? >= 1.21.1
-                    builder.alwaysEdible();
+                    /*builder.alwaysEdible();*/
         }
 
         return builder;

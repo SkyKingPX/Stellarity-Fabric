@@ -3,7 +3,7 @@
   "package": "xyz.kohara.stellarity.mixin",
   "compatibilityLevel": "${java}",
   "mixins": [
-    "ExampleMixin"
+    "VoidFishingMixin"
   ],
   "injectors": {
     "defaultRequire": 1

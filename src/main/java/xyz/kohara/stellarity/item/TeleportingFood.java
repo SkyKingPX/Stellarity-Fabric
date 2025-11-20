@@ -4,11 +4,11 @@ import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.Item;
 
 //? >=1.21.10 {
-import net.minecraft.world.item.component.Consumable;
+/*import net.minecraft.world.item.component.Consumable;
 import net.minecraft.world.item.component.Consumables;
 import net.minecraft.world.item.consume_effects.TeleportRandomlyConsumeEffect;
-//?} else {
-/*import net.minecraft.world.item.ItemStack;
+*///?} else {
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.Vec3;
@@ -21,7 +21,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.animal.Fox;
 import net.minecraft.world.entity.player.Player;
-*///?}
+//?}
 
 public abstract class TeleportingFood extends Item {
     private final int teleportDiameter;
@@ -36,18 +36,18 @@ public abstract class TeleportingFood extends Item {
     }
 
     //? >=1.21.9 {
-    public static Properties properties(FoodProperties foodProperties, int teleportDiameter, Consumable.Builder consumableBuilder) {
+    /*public static Properties properties(FoodProperties foodProperties, int teleportDiameter, Consumable.Builder consumableBuilder) {
         return new Item.Properties()
                 .food(foodProperties, consumableBuilder.onConsume(new TeleportRandomlyConsumeEffect(teleportDiameter)).build()).useCooldown(1f);
     }
     public static Properties properties(FoodProperties foodProperties, int teleportDiameter) {
         return properties(foodProperties, teleportDiameter, Consumables.defaultFood());
     }
-    //?}
+    *///?}
 
     //? <= 1.21.1 {
     
-    /*public static Properties properties(FoodProperties foodProperties, int teleportDiameter) {
+    public static Properties properties(FoodProperties foodProperties, int teleportDiameter) {
         return new Item.Properties().food(foodProperties);
     }
     @Override
@@ -88,12 +88,12 @@ public abstract class TeleportingFood extends Item {
 
             if (livingEntity instanceof Player player) {
                 //? = 1.21.1
-                /^player.resetCurrentImpulseContext();^/
+                /*player.resetCurrentImpulseContext();*/
                 player.getCooldowns().addCooldown(this, 20);
             }
         }
 
         return itemStack2;
     }
-    *///?}
+    //?}
 }
