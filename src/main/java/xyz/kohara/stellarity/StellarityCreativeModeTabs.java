@@ -23,11 +23,14 @@ public class StellarityCreativeModeTabs {
     };
 
     public static final Item[] FOOD_ITEMS = new Item[]{
+            StellarityItems.CRYSTAL_HEARTFISH,
             StellarityItems.SUSHI,
             StellarityItems.GOLDEN_CHORUS_FRUIT,
             StellarityItems.FRIED_CHORUS_FRUIT,
             StellarityItems.FROZEN_CARPACCIO,
             StellarityItems.ENDERMAN_FLESH,
+            StellarityItems.GRILLED_ENDERMAN_FLESH,
+            StellarityItems.FLAREFIN_KOI,
     };
 
     public static final Item[] EQUIPMENT_ITEMS = new Item[]{

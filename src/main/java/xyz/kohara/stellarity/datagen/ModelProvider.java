@@ -69,5 +69,8 @@ public class ModelProvider extends FabricModelProvider {
         generators.generateFlatItem(StellarityItems.FRIED_CHORUS_FRUIT, ModelTemplates.FLAT_ITEM);
         generators.generateFlatItem(StellarityItems.FROZEN_CARPACCIO, ModelTemplates.FLAT_ITEM);
         generators.generateFlatItem(StellarityItems.ENDERMAN_FLESH, ModelTemplates.FLAT_ITEM);
+        generators.generateFlatItem(StellarityItems.CRYSTAL_HEARTFISH, ModelTemplates.FLAT_ITEM);
+        generators.generateFlatItem(StellarityItems.GRILLED_ENDERMAN_FLESH, ModelTemplates.FLAT_ITEM);
+        generators.generateFlatItem(StellarityItems.FLAREFIN_KOI, ModelTemplates.FLAT_ITEM);
     }
 }

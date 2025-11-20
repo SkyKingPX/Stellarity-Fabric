@@ -5,14 +5,16 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
-import xyz.kohara.stellarity.item.CallOfTheVoid;
-import xyz.kohara.stellarity.item.EndermanFlesh;
-import xyz.kohara.stellarity.item.FriedChorusFruit;
-import xyz.kohara.stellarity.item.GoldenChorusFruit;
+import xyz.kohara.stellarity.item.*;
+//? >= 1.21.9 {
+import net.minecraft.world.item.component.Consumables;
+import net.minecraft.world.item.consume_effects.ApplyStatusEffectsConsumeEffect;
+//?}
 
 
 import java.util.function.Function;
@@ -25,6 +27,15 @@ public class StellarityItems {
     public static final Item FRIED_CHORUS_FRUIT = register("fried_chorus_fruit", FriedChorusFruit::new, FriedChorusFruit.properties());
     public static final Item FROZEN_CARPACCIO = register("frozen_carpaccio", Item::new, new Item.Properties().food(basicFood(7, 8.4f)));
     public static final Item ENDERMAN_FLESH = register("enderman_flesh", EndermanFlesh::new, EndermanFlesh.properties());
+    public static final Item CRYSTAL_HEARTFISH = register("crystal_heartfish", CrystalHeartfish::new, CrystalHeartfish.properties());
+    public static final Item GRILLED_ENDERMAN_FLESH = register("grilled_enderman_flesh", Item::new, new Item.Properties().food(basicFood(6, 9.6f)));
+    public static final Item FLAREFIN_KOI = register("flarefin_koi", Item::new,
+            //? >= 1.21.9 {
+            new Item.Properties().food(basicFood(4, 0.8f), Consumables.defaultFood().onConsume(new ApplyStatusEffectsConsumeEffect(new MobEffectInstance(MobEffects.FIRE_RESISTANCE, 16*20), 1.0f)).build()));
+            //?} else {
+            /*new Item.Properties().food(partialFood(4, 0.8f).effect(new MobEffectInstance(MobEffects.FIRE_RESISTANCE, 16*20), 1.0f).build()));
+            *///?}
+
 
     public static final Item ENDER_DIRT = registerBlock("ender_dirt", StellarityBlocks.ENDER_DIRT);
     public static final Item ENDER_GRASS_BLOCK = registerBlock("ender_grass_block", StellarityBlocks.ENDER_GRASS_BLOCK);
@@ -60,6 +71,10 @@ public class StellarityItems {
         Registry.register(BuiltInRegistries.ITEM, itemKey, item);
 
         return item;
+    }
+
+    public static FoodProperties.Builder partialFood(int nutrition, float saturation) {
+        return partialFood(nutrition, saturation, false);
     }
 
     public static FoodProperties.Builder partialFood(int nutrition, float saturation, boolean alwaysEat) {
