@@ -3,6 +3,7 @@ package xyz.kohara.stellarity.mixin;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.EntityType;
@@ -26,11 +27,13 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import net.minecraft.core.particles.ParticleOptions;
+
 //? >= 1.21.10 {
-/*import net.minecraft.core.particles.ParticleOptions;
-import net.minecraft.core.particles.PowerParticleOption;
+/*import net.minecraft.core.particles.PowerParticleOption;
 *///?} else {
 import net.minecraft.core.particles.SimpleParticleType;
+
 //?}
 
 @Mixin(FishingHook.class)
@@ -114,15 +117,15 @@ public abstract class VoidFishingMixin extends Projectile {
                     float vz = Mth.sin(i) * 0.04f;
                     //? < 1.21.9 {
                     level.addParticle(ParticleTypes.DRAGON_BREATH, x, y, z, vx, 0, vz);
-                    //?} else {
-                    /*level.addParticle(PowerParticleOption.create(ParticleTypes.DRAGON_BREATH, 1F),  x, y, z, vx, 0, vz);
+                     //?} else {
+                    /*level.addParticle(PowerParticleOption.create(ParticleTypes.DRAGON_BREATH, 1F), x, y, z, vx, 0, vz);
                     *///?}
                 }
             }
 
             //? < 1.21.9 {
             SimpleParticleType particleType = random.nextBoolean() ? ParticleTypes.DRAGON_BREATH : ParticleTypes.END_ROD;
-            //?} else {
+             //?} else {
             /*ParticleOptions particleType = random.nextBoolean() ? PowerParticleOption.create(ParticleTypes.DRAGON_BREATH, 1F) : ParticleTypes.END_ROD;
             *///?}
 
@@ -144,29 +147,29 @@ public abstract class VoidFishingMixin extends Projectile {
         }
     }
 
-    @Redirect(method = "catchingFish", at= @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/state/BlockState;is(Lnet/minecraft/world/level/block/Block;)Z"))
+    @Redirect(method = "catchingFish", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/state/BlockState;is(Lnet/minecraft/world/level/block/Block;)Z"))
     private boolean addVoidVishingToWaterCheck(BlockState instance, Block block) {
         return isVoidFishing || instance.is(block);
     }
 
-    @Redirect(method = "catchingFish", at = @At(value = "FIELD", target = "Lnet/minecraft/core/particles/ParticleTypes;BUBBLE:Lnet/minecraft/core/particles/SimpleParticleType;", opcode = Opcodes.GETSTATIC))
-    private SimpleParticleType bubbleParticles() {
-        return isVoidFishing ? ParticleTypes.DRAGON_BREATH : ParticleTypes.BUBBLE;
+    @Redirect(method = "catchingFish", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerLevel;sendParticles(Lnet/minecraft/core/particles/ParticleOptions;DDDIDDDD)I"))
+    private int splashParticles(ServerLevel instance, ParticleOptions particleOptions, double d, double e, double f, int i, double g, double h, double j, double k) {
+        if (isVoidFishing) {
+            if (particleOptions == ParticleTypes.SPLASH || particleOptions == ParticleTypes.FISHING) particleOptions = ParticleTypes.WITCH;
+            if (particleOptions == ParticleTypes.BUBBLE) particleOptions =
+                //? >= 1.21.9 {
+                    /*PowerParticleOption.create(ParticleTypes.DRAGON_BREATH, 1f);
+                *///?} else {
+                ParticleTypes.DRAGON_BREATH;
+                //?}
+
+        }
+
+        return instance.sendParticles(particleOptions, d, e, f, evalVoidFishing() ? i * 2 : i, g, h, j, k);
     }
 
-    @Redirect(method = "catchingFish", at = @At(value = "FIELD", target = "Lnet/minecraft/core/particles/ParticleTypes;FISHING:Lnet/minecraft/core/particles/SimpleParticleType;", opcode = Opcodes.GETSTATIC))
-    private SimpleParticleType fishingParticles() {
-        return isVoidFishing ? ParticleTypes.WITCH : ParticleTypes.FISHING;
-    }
 
-
-    @Redirect(method = "catchingFish", at = @At(value = "FIELD", target = "Lnet/minecraft/core/particles/ParticleTypes;SPLASH:Lnet/minecraft/core/particles/SimpleParticleType;", opcode = Opcodes.GETSTATIC))
-    private SimpleParticleType splashParticles() {
-        return isVoidFishing ? ParticleTypes.WITCH : ParticleTypes.SPLASH;
-    }
-
-
-    @Redirect( method = "catchingFish", at= @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/projectile/FishingHook;playSound(Lnet/minecraft/sounds/SoundEvent;FF)V"))
+    @Redirect(method = "catchingFish", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/projectile/FishingHook;playSound(Lnet/minecraft/sounds/SoundEvent;FF)V"))
     public void louderSplash(FishingHook instance, SoundEvent soundEvent, float v, float p) {
         instance.playSound(soundEvent, evalVoidFishing() ? 1.5f : v, p);
     }
