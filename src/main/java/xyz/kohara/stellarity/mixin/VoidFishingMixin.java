@@ -3,6 +3,7 @@ package xyz.kohara.stellarity.mixin;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MoverType;
@@ -10,10 +11,13 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.FishingHook;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.dimension.BuiltinDimensionTypes;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
+import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -33,6 +37,9 @@ import net.minecraft.core.particles.SimpleParticleType;
 public abstract class VoidFishingMixin extends Projectile {
     @Shadow
     private FishingHook.FishHookState currentState;
+
+    @Unique
+    private boolean isVoidFishing = false;
 
     @Unique
     private boolean splashed = false;
@@ -62,13 +69,13 @@ public abstract class VoidFishingMixin extends Projectile {
     }
 
     @Unique
-    private boolean isVoidFishing() {
+    private boolean evalVoidFishing() {
         return isNotInEndWater() && currentState == FishingHook.FishHookState.BOBBING;
     }
 
     @Unique
     private boolean canBob() {
-        return isNotInEndWater() && this.distanceTo(this.getPlayerOwner()) > 20.0;
+        return isNotInEndWater() && (this.currentState == FishingHook.FishHookState.BOBBING || this.distanceTo(this.getPlayerOwner()) > 20.0);
     }
 
     @ModifyVariable(method = "tick()V", at = @At(value = "STORE"), ordinal = 0)
@@ -83,7 +90,8 @@ public abstract class VoidFishingMixin extends Projectile {
 
     @Redirect(method = "tick()V", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/projectile/FishingHook;move(Lnet/minecraft/world/entity/MoverType;Lnet/minecraft/world/phys/Vec3;)V"))
     private void voidFishingHover(FishingHook instance, MoverType moverType, Vec3 vec3) {
-        if (this.isVoidFishing()) {
+        this.isVoidFishing = evalVoidFishing();
+        if (isVoidFishing) {
             this.setDeltaMovement(0.0, 0.0, 0.0);
         } else {
             instance.move(moverType, vec3);
@@ -93,7 +101,7 @@ public abstract class VoidFishingMixin extends Projectile {
     @Inject(method = "tick", at = @At("TAIL"))
     private void visuals(CallbackInfo ci) {
         if (level() instanceof ClientLevel level) {
-            if (!isVoidFishing()) return;
+            if (!evalVoidFishing()) return;
             double x = getX();
             double y = getY();
             double z = getZ();
@@ -134,6 +142,33 @@ public abstract class VoidFishingMixin extends Projectile {
 
 
         }
+    }
+
+    @Redirect(method = "catchingFish", at= @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/state/BlockState;is(Lnet/minecraft/world/level/block/Block;)Z"))
+    private boolean addVoidVishingToWaterCheck(BlockState instance, Block block) {
+        return isVoidFishing || instance.is(block);
+    }
+
+    @Redirect(method = "catchingFish", at = @At(value = "FIELD", target = "Lnet/minecraft/core/particles/ParticleTypes;BUBBLE:Lnet/minecraft/core/particles/SimpleParticleType;", opcode = Opcodes.GETSTATIC))
+    private SimpleParticleType bubbleParticles() {
+        return isVoidFishing ? ParticleTypes.DRAGON_BREATH : ParticleTypes.BUBBLE;
+    }
+
+    @Redirect(method = "catchingFish", at = @At(value = "FIELD", target = "Lnet/minecraft/core/particles/ParticleTypes;FISHING:Lnet/minecraft/core/particles/SimpleParticleType;", opcode = Opcodes.GETSTATIC))
+    private SimpleParticleType fishingParticles() {
+        return isVoidFishing ? ParticleTypes.WITCH : ParticleTypes.FISHING;
+    }
+
+
+    @Redirect(method = "catchingFish", at = @At(value = "FIELD", target = "Lnet/minecraft/core/particles/ParticleTypes;SPLASH:Lnet/minecraft/core/particles/SimpleParticleType;", opcode = Opcodes.GETSTATIC))
+    private SimpleParticleType splashParticles() {
+        return isVoidFishing ? ParticleTypes.WITCH : ParticleTypes.SPLASH;
+    }
+
+
+    @Redirect( method = "catchingFish", at= @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/projectile/FishingHook;playSound(Lnet/minecraft/sounds/SoundEvent;FF)V"))
+    public void louderSplash(FishingHook instance, SoundEvent soundEvent, float v, float p) {
+        instance.playSound(soundEvent, evalVoidFishing() ? 1.5f : v, p);
     }
 
 }
