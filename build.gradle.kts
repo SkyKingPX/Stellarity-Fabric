@@ -1,5 +1,6 @@
 plugins {
     id("fabric-loom")
+    id("dev.kikugie.fletching-table.fabric") version "0.1.0-alpha.22"
 
     // `maven-publish`
     // id("me.modmuss50.mod-publish-plugin")
@@ -50,6 +51,8 @@ dependencies {
 //        "fabric-rendering-api-v1")
 }
 
+
+
 loom {
     fabricModJsonPath = rootProject.file("src/main/resources/fabric.mod.json") // Useful for interface injection
     accessWidenerPath = rootProject.file("src/main/resources/stellarity.accesswidener")
@@ -60,16 +63,14 @@ loom {
 
     runConfigs.all {
         ideConfigGenerated(true)
-        vmArgs("-Dmixin.debug.export=true") // Exports transformed classes for debugging
+        vmArgs("-Dmixin.debug.export=true -XX:+AllowEnhancedClassRedefinition") // Exports transformed classes for debugging
         runDir = "../../run" // Shares the run directory between versions
     }
 }
 
 fabricApi {
     configureDataGeneration() {
-        //? >= 1.21.4
         client = true
-
     }
 }
 
@@ -77,6 +78,14 @@ java {
     withSourcesJar()
     targetCompatibility = requiredJava
     sourceCompatibility = requiredJava
+}
+
+fletchingTable {
+    j52j.register("main") {
+        if (stonecutter.eval(stonecutter.current.version, "< 1.21")) {
+            extension("json", "data/stellarity/loot_table/void_fishing/* -> /data/stellarity/loot_tables/void_fishing/")
+        }
+    }
 }
 
 tasks {
@@ -87,10 +96,11 @@ tasks {
         inputs.property("version", project.property("mod.version"))
         inputs.property("minecraft", project.property("mod.mc_dep"))
 
+
         val props = mapOf(
             "id" to project.property("mod.id"),
-            "name" to project.property("mod.id"),
-            "version" to project.property("mod.id"),
+            "name" to project.property("mod.name"),
+            "version" to project.property("mod.version"),
             "minecraft" to project.property("mod.mc_dep")
         )
 
@@ -107,7 +117,10 @@ tasks {
         into(rootProject.layout.buildDirectory.file("libs/${project.property("mod.version")}"))
         dependsOn("build")
     }
+
+
 }
+
 
 /*
 // Publishes builds to Modrinth and Curseforge with changelog from the CHANGELOG.md file
@@ -168,3 +181,4 @@ publishing {
     }
 }
  */
+

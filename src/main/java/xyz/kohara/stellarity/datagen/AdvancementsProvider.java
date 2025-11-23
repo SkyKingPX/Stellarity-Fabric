@@ -6,82 +6,122 @@ import net.minecraft.advancements.*;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricAdvancementProvider;
 
 
-import net.minecraft.advancements.critereon.ImpossibleTrigger;
+import net.minecraft.advancements.critereon.*;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.level.dimension.BuiltinDimensionTypes;
 import xyz.kohara.stellarity.Stellarity;
 import xyz.kohara.stellarity.StellarityItems;
 
+import java.util.List;
+import java.util.Optional;
 import java.util.function.Consumer;
 //? >= 1.21.1 {
 /*import net.minecraft.core.HolderLookup;
+import xyz.kohara.stellarity.advancements.critereron.VoidFishedTrigger;
 
 import java.util.concurrent.CompletableFuture;
 *///?} else {
 
 import net.minecraft.advancements.FrameType;
 import net.minecraft.advancements.CriterionTriggerInstance;
- //?}
+import net.minecraft.world.level.Level;
+import xyz.kohara.stellarity.advancements.critereron.VoidFishedTrigger;
+  //?}
 
 public class AdvancementsProvider extends FabricAdvancementProvider {
 
 
+  //? >= 1.21.1 {
+  /*public AdvancementType TASK = AdvancementType.TASK;
+  public AdvancementType GOAL = AdvancementType.GOAL;
+  public AdvancementType CHALLENGE = AdvancementType.CHALLENGE;
+
+  public AdvancementsProvider(FabricDataOutput output, CompletableFuture<HolderLookup.Provider> registryLookup) {
+    super(output, registryLookup);
+  }
+
+  *///?} else {
+
+  public FrameType TASK = FrameType.TASK;
+  public FrameType GOAL = FrameType.GOAL;
+  public FrameType CHALLENGE = FrameType.CHALLENGE;
+
+  public AdvancementsProvider(FabricDataOutput output) {
+    super(output);
+  }
+  //?}
+
+  @Override
+  public void generateAdvancement(
     //? >= 1.21.1 {
-    /*public AdvancementType TASK = AdvancementType.TASK;
-    public AdvancementType GOAL = AdvancementType.GOAL;
-    public AdvancementType CHALLENGE = AdvancementType.CHALLENGE;
+    /*HolderLookup.Provider registryLookup, Consumer<AdvancementHolder> consumer
+     *///?} else {
+    Consumer<Advancement> consumer
+    //?}
+  ) {
+    //? >= 1.21.1 {
+    /*final HolderLookup.RegistryLookup<Item> itemLookup =registryLookup.lookupOrThrow(Registries.ITEM);
+     *///?}
 
-    public AdvancementsProvider(FabricDataOutput output, CompletableFuture<HolderLookup.Provider> registryLookup) {
-        super(output, registryLookup);
-    }
 
-    @Override
-    public void generateAdvancement(HolderLookup.Provider registryLookup, Consumer<AdvancementHolder> consumer) {
-        generateAdvancement(consumer);
-    }
-    *///?} else {
 
-    public FrameType TASK = FrameType.TASK;
-    public FrameType GOAL = FrameType.GOAL;
-    public FrameType CHALLENGE = FrameType.CHALLENGE;
-    public AdvancementsProvider(FabricDataOutput output) {
-        super(output);
-    }
 
-    @Override
-            //?}
-    public void generateAdvancement(Consumer<
-            //? >= 1.21.1 {
-            /*AdvancementHolder
-            *///?} else {
-            Advancement
-             //?}
-            > consumer) {
+    var VOID_REELS = Advancement.Builder.advancement()
+      .display(StellarityItems.FISHER_OF_VOIDS,
+        Component.translatable("advancements.stellarity.void_reels"),
+        Component.translatable("advancements.stellarity.void_reels.description"),
+        Stellarity.mcOf("textures/gui/advancements/backgrounds/adventure.png"),
+        TASK,
+        true,
+        true,
+        false
+      )
+      //? >= 1.21.1 {
+      /*.parent(new AdvancementHolder(Stellarity.mcOf("end/enter_end_gateway"), null))
+      .addCriterion("fishing", VoidFishedTrigger.TriggerInstance.fishedItem(Optional.empty(), Optional.empty(), Optional.empty()))
+      .requirements(new AdvancementRequirements(List.of(List.of("fishing"))))
+      *///? }else {
+      .parent(Stellarity.mcOf("end/enter_end_gateway"))
+      .addCriterion("fishing", VoidFishedTrigger.TriggerInstance.fishedItem(
+        ItemPredicate.ANY, EntityPredicate.ANY, ItemPredicate.ANY
+      ))
+      .requirements(new String[][]{{"fishing"}})
+      //?}
+      .build(Stellarity.of("void_fishing/void_reels"));
 
-        consumer.accept(Advancement.Builder.advancement()
-                .display(
-                        StellarityItems.CRYSTAL_HEARTFISH,
-                        Component.translatable("advancements.stellarity.topped_off"),
-                        Component.translatable("advancements.stellarity.topped_off.description"),
-                        Stellarity.mcOf("textures/gui/advancements/backgrounds/adventure.png"),
-                        TASK,
-                        true,
-                        true,
-                        false
-                )
-                        .addCriterion("impossible", impossible())
-                .build(Stellarity.of("void_fishing/topped_off")));
-    }
+    var TOPPED_OFF = Advancement.Builder.advancement()
+      .display(
+        StellarityItems.CRYSTAL_HEARTFISH,
+        Component.translatable("advancements.stellarity.topped_off"),
+        Component.translatable("advancements.stellarity.topped_off.description"),
+        Stellarity.mcOf("textures/gui/advancements/backgrounds/adventure.png"),
+        TASK,
+        true,
+        true,
+        false
+      )
+      .parent(VOID_REELS)
+      .addCriterion("impossible", impossible())
+      .build(Stellarity.of("void_fishing/topped_off"));
 
-    //? < 1.21.1 {
-    private CriterionTriggerInstance impossible() {
-        return new ImpossibleTrigger.TriggerInstance();
-    }
 
-    //?} else {
-    /*private Criterion<ImpossibleTrigger.TriggerInstance> impossible() {
-        return CriteriaTriggers.IMPOSSIBLE.createCriterion(new ImpossibleTrigger.TriggerInstance());
-    }
-    *///?}
+    consumer.accept(VOID_REELS);
+    consumer.accept(TOPPED_OFF);
+  }
+
+  //? < 1.21.1 {
+  private CriterionTriggerInstance impossible() {
+    return new ImpossibleTrigger.TriggerInstance();
+  }
+
+  //?} else {
+  /*private Criterion<ImpossibleTrigger.TriggerInstance> impossible() {
+    return CriteriaTriggers.IMPOSSIBLE.createCriterion(new ImpossibleTrigger.TriggerInstance());
+  }
+  *///?}
 
 
 }

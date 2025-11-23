@@ -16,32 +16,31 @@ import java.util.function.Function;
 
 public class StellarityBlocks {
 
-    public static final Block ENDER_DIRT = register("ender_dirt", Block::new, BlockBehaviour.Properties.of()
-            .mapColor(MapColor.DIRT)
-            .strength(0.5F)
-            .sound(SoundType.ROOTED_DIRT));
-    public static final Block ENDER_GRASS_BLOCK = register("ender_grass_block", EnderGrassBlock::new, EnderGrassBlock.blockProperties());
-    public static final Block ASHEN_FROGLIGHT = register("ashen_froglight", RotatedPillarBlock::new, BlockBehaviour.Properties.of()
-            .mapColor(MapColor.SAND)
-            .strength(0.3F)
-            .lightLevel((state) -> 15)
-            .sound(SoundType.FROGLIGHT));
+  public static final Block ENDER_DIRT = register("ender_dirt", Block::new, BlockBehaviour.Properties.of()
+    .mapColor(MapColor.DIRT)
+    .strength(0.5F)
+    .sound(SoundType.ROOTED_DIRT));
+  public static final Block ENDER_GRASS_BLOCK = register("ender_grass_block", EnderGrassBlock::new, EnderGrassBlock.blockProperties());
+  public static final Block ASHEN_FROGLIGHT = register("ashen_froglight", RotatedPillarBlock::new, BlockBehaviour.Properties.of()
+    .mapColor(MapColor.SAND)
+    .strength(0.3F)
+    .lightLevel((state) -> 15)
+    .sound(SoundType.FROGLIGHT));
 
 
+  public static Block register(String id, Function<BlockBehaviour.Properties, Block> blockFactory, BlockBehaviour.Properties settings) {
+    ResourceKey<Block> blockKey = ResourceKey.create(Registries.BLOCK, Stellarity.of(id));
+    //? >= 1.21.9 {
+    /*settings = settings.setId(blockKey);
+     *///?}
 
-    public static Block register(String id, Function<BlockBehaviour.Properties, Block> blockFactory, BlockBehaviour.Properties settings) {
-        ResourceKey<Block> blockKey = ResourceKey.create(Registries.BLOCK, Stellarity.of(id));
-        //? >= 1.21.9 {
-        /*settings = settings.setId(blockKey);
-        *///?}
+    Block block = blockFactory.apply(settings);
+    Registry.register(BuiltInRegistries.BLOCK, blockKey, block);
 
-        Block block = blockFactory.apply(settings);
-        Registry.register(BuiltInRegistries.BLOCK, blockKey, block);
+    return block;
+  }
 
-        return block;
-    }
-
-    public static void init() {
-        Stellarity.LOGGER.info("Registering Stellarity Blocks");
-    }
+  public static void init() {
+    Stellarity.LOGGER.info("Registering Stellarity Blocks");
+  }
 }

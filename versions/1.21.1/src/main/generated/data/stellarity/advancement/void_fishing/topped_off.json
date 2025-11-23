@@ -1,4 +1,5 @@
 {
+  "parent": "stellarity:void_fishing/void_reels",
   "criteria": {
     "impossible": {
       "trigger": "minecraft:impossible"

@@ -3,9 +3,14 @@
   "package": "xyz.kohara.stellarity.mixin",
   "compatibilityLevel": "${java}",
   "mixins": [
-    "VoidFishingMixin"
+    "datagen_patch.AdvancementBuilderMixin",
+    "void_fishing.FishingHookMixin",
+    "void_fishing.FishingRodItemMixin"
   ],
   "injectors": {
     "defaultRequire": 1
-  }
+  },
+  "client": [
+    "void_fishing.FishingHookRendererMixin"
+  ]
 }

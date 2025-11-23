@@ -9,7 +9,7 @@ pluginManagement {
 }
 
 plugins {
-    id("dev.kikugie.stonecutter") version "0.7.10"
+    id("dev.kikugie.stonecutter") version "0.8-alpha.12"
 }
 
 stonecutter {
@@ -20,4 +20,4 @@ stonecutter {
     }
 }
 
-rootProject.name = "Template"
+rootProject.name = "Stellarity"
