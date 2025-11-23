@@ -3,7 +3,6 @@
   "package": "xyz.kohara.stellarity.mixin",
   "compatibilityLevel": "${java}",
   "mixins": [
-    "datagen_patch.AdvancementBuilderMixin",
     "void_fishing.FishingHookMixin",
     "void_fishing.FishingRodItemMixin"
   ],

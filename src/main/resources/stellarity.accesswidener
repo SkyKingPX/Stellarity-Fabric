@@ -3,8 +3,3 @@ accessWidener v2 named
 extendable method net/minecraft/world/entity/decoration/ItemFrame onItemChanged (Lnet/minecraft/world/item/ItemStack;)V
 accessible class net/minecraft/server/commands/AdvancementCommands$Action
 accessible class net/minecraft/world/entity/projectile/FishingHook$FishHookState
-#? >= 1.21.4 {
-#accessible method net/minecraft/client/data/models/model/ModelTemplates createItem (Ljava/lang/String;[Lnet/minecraft/client/data/models/model/TextureSlot;)Lnet/minecraft/client/data/models/model/ModelTemplate;
-#? } else {
-accessible method net/minecraft/data/models/model/ModelTemplates createItem (Ljava/lang/String;[Lnet/minecraft/data/models/model/TextureSlot;)Lnet/minecraft/data/models/model/ModelTemplate;
-#? }

@@ -1,5 +1,7 @@
 package xyz.kohara.stellarity.mixin.void_fishing;
 
+import com.llamalad7.mixinextras.sugar.Local;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
@@ -22,6 +24,8 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.dimension.BuiltinDimensionTypes;
+import net.minecraft.world.level.storage.loot.LootParams;
+import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 import org.objectweb.asm.Opcodes;
@@ -33,6 +37,7 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import net.minecraft.core.particles.ParticleOptions;
 import xyz.kohara.stellarity.StellarityItems;
+import xyz.kohara.stellarity.advancements.StellarityCriteriaTriggers;
 import xyz.kohara.stellarity.duck_interface.VoidFishable;
 
 //? >= 1.21.10 {
@@ -74,6 +79,9 @@ public abstract class FishingHookMixin extends Projectile implements VoidFishabl
   @Shadow
   @Final
   private int lureSpeed;
+
+  @Shadow
+  private int timeUntilLured;
 
   public FishingHookMixin(EntityType<? extends Projectile> entityType, Level level) {
     super(entityType, level);
@@ -201,13 +209,9 @@ public abstract class FishingHookMixin extends Projectile implements VoidFishabl
     return instance.is(StellarityItems.FISHER_OF_VOIDS) || instance.is(item);
   }
 
-  @Redirect(method="catchingFish", at= @At(value = "FIELD", target = "Lnet/minecraft/world/entity/projectile/FishingHook;lureSpeed:I", opcode = Opcodes.GETFIELD))
-  private int increaseLure(FishingHook instance) {
-//    if (canBob()) {
-//      this.currentState = FishingHook.FishHookState.BOBBING;
-//    }
-//    this.isVoidFishing = evalVoidFishing();
-    return (isVoidFishing && buffVoidFishing ? 200 : 0) + this.lureSpeed;
+  @Inject(method="catchingFish", at = @At(value = "FIELD", shift = At.Shift.AFTER, target = "Lnet/minecraft/world/entity/projectile/FishingHook;timeUntilLured:I", opcode = Opcodes.PUTFIELD, ordinal = 1))
+  private void increaseLure(BlockPos blockPos, CallbackInfo ci) {
+    if (isVoidFishing && buffVoidFishing) this.timeUntilLured -= 200;
   }
 
   @Unique
@@ -215,5 +219,12 @@ public abstract class FishingHookMixin extends Projectile implements VoidFishabl
     this.buffVoidFishing = buffVoidFishing;
   }
 
-
+  @Redirect(method = "retrieve", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/storage/loot/LootTable;getRandomItems(Lnet/minecraft/world/level/storage/loot/LootParams;)Lit/unimi/dsi/fastutil/objects/ObjectArrayList;"))
+  private ObjectArrayList<ItemStack> voidFishingRetrieve(LootTable instance, LootParams lootParams, @Local Player player, @Local(argsOnly = true) ItemStack itemStack) {
+    ObjectArrayList<ItemStack> list = instance.getRandomItems(lootParams);
+    if (isVoidFishing) {
+      StellarityCriteriaTriggers.VOID_FISHED.trigger((ServerPlayer) player, itemStack, (FishingHook) (Object) this, list);
+    }
+    return list;
+  }
 }

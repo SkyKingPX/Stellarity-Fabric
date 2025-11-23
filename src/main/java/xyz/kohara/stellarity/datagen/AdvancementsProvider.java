@@ -10,11 +10,13 @@ import net.minecraft.advancements.critereon.*;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.dimension.BuiltinDimensionTypes;
 import xyz.kohara.stellarity.Stellarity;
 import xyz.kohara.stellarity.StellarityItems;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -52,6 +54,17 @@ public class AdvancementsProvider extends FabricAdvancementProvider {
   public AdvancementsProvider(FabricDataOutput output) {
     super(output);
   }
+
+  public static Advancement dummy(ResourceLocation id) {
+    return new Advancement(id,
+      null,
+      null,
+      null,
+      new HashMap<>(),
+      null,
+      true
+    );
+  }
   //?}
 
   @Override
@@ -64,7 +77,9 @@ public class AdvancementsProvider extends FabricAdvancementProvider {
   ) {
     //? >= 1.21.1 {
     /*final HolderLookup.RegistryLookup<Item> itemLookup =registryLookup.lookupOrThrow(Registries.ITEM);
-     *///?}
+     *///?} else {
+    var ENTER_END_GATEWAY = dummy(Stellarity.mcOf("end/enter_end_gateway"));
+    //?}
 
 
 
@@ -84,7 +99,7 @@ public class AdvancementsProvider extends FabricAdvancementProvider {
       .addCriterion("fishing", VoidFishedTrigger.TriggerInstance.fishedItem(Optional.empty(), Optional.empty(), Optional.empty()))
       .requirements(new AdvancementRequirements(List.of(List.of("fishing"))))
       *///? }else {
-      .parent(Stellarity.mcOf("end/enter_end_gateway"))
+      .parent(ENTER_END_GATEWAY)
       .addCriterion("fishing", VoidFishedTrigger.TriggerInstance.fishedItem(
         ItemPredicate.ANY, EntityPredicate.ANY, ItemPredicate.ANY
       ))
@@ -108,8 +123,9 @@ public class AdvancementsProvider extends FabricAdvancementProvider {
       .build(Stellarity.of("void_fishing/topped_off"));
 
 
-    consumer.accept(VOID_REELS);
     consumer.accept(TOPPED_OFF);
+    consumer.accept(VOID_REELS);
+
   }
 
   //? < 1.21.1 {
