@@ -1,14 +1,9 @@
-package xyz.kohara.stellarity.advancements.critereron;
+package xyz.kohara.stellarity.advancement_criterion;
 
 //? < 1.21 {
 import com.google.gson.JsonObject;
 import java.util.Collection;
-import java.util.Optional;
 
-import com.mojang.serialization.Codec;
-import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.advancements.CriteriaTriggers;
-import net.minecraft.advancements.Criterion;
 import net.minecraft.advancements.critereon.*;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -112,7 +107,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import org.jetbrains.annotations.NotNull;
-import xyz.kohara.stellarity.advancements.StellarityCriteriaTriggers;
+import xyz.kohara.stellarity.StellarityCriteriaTriggers;
 
 public class VoidFishedTrigger extends SimpleCriterionTrigger<VoidFishedTrigger.TriggerInstance> {
   public @NotNull Codec<TriggerInstance> codec() {

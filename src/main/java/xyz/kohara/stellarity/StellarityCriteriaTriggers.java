@@ -1,8 +1,7 @@
-package xyz.kohara.stellarity.advancements;
+package xyz.kohara.stellarity;
 
 import net.minecraft.advancements.CriteriaTriggers;
-import xyz.kohara.stellarity.Stellarity;
-import xyz.kohara.stellarity.advancements.critereron.VoidFishedTrigger;
+import xyz.kohara.stellarity.advancement_criterion.VoidFishedTrigger;
 
 public class StellarityCriteriaTriggers {
   public static VoidFishedTrigger VOID_FISHED = CriteriaTriggers.register(

@@ -36,10 +36,9 @@ import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import net.minecraft.core.particles.ParticleOptions;
-import xyz.kohara.stellarity.Stellarity;
 import xyz.kohara.stellarity.StellarityItems;
-import xyz.kohara.stellarity.advancements.StellarityCriteriaTriggers;
-import xyz.kohara.stellarity.duck_interface.VoidFishable;
+import xyz.kohara.stellarity.StellarityCriteriaTriggers;
+import xyz.kohara.stellarity.interface_injection.ExtFishingHook;
 
 //? >= 1.21.10 {
 /*import net.minecraft.core.particles.PowerParticleOption;
@@ -49,7 +48,7 @@ import xyz.kohara.stellarity.duck_interface.VoidFishable;
 //?}
 
 @Mixin(FishingHook.class)
-public abstract class FishingHookMixin extends Projectile implements VoidFishable {
+public abstract class FishingHookMixin extends Projectile implements ExtFishingHook {
   @Unique
   private static final ParticleOptions DRAGON_BREATH =
     //? >= 1.21.9 {
