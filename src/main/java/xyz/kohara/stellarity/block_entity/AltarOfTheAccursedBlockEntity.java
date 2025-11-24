@@ -10,18 +10,19 @@ import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
-import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.dimension.end.EndDragonFight;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
 import xyz.kohara.stellarity.StellarityBlockEntityTypes;
-//? 1.21.9 {
-/*import net.minecraft.util.ColorRGBA;
+//? > 1.21.9 {
+/*import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
  *///?}
 
 public class AltarOfTheAccursedBlockEntity extends BlockEntity {
@@ -74,9 +75,20 @@ public class AltarOfTheAccursedBlockEntity extends BlockEntity {
   }
 
   *///? } else {
+/*
+  @Override
+  public void saveAdditional(ValueOutput valueOutput) {
+    super.saveAdditional(valueOutput);
+    valueOutput.putBoolean("unlocked", unlocked);
+  }
 
-  
-  //? }
+  @Override
+  protected void loadAdditional(ValueInput valueInput) {
+    super.loadAdditional(valueInput);
+    this.unlocked = valueInput.getBooleanOr("unlocked", false);
+  }
+
+  *///? }
 
   //? > 1.21 {
 /*
@@ -109,15 +121,24 @@ public class AltarOfTheAccursedBlockEntity extends BlockEntity {
         double dx = Mth.cos(angle);
         double dz = Mth.sin(angle);
 
+        //? >= 1.21.9 {
+        /*var purpleStart = 12255487;
+        var purpleEnd = 1769509;
+        *///?} else {
+        var purpleStart = new Vector3f(0.733f, 0.0f, 1.0f);
+        var purpleEnd = new Vector3f(0.106f, 0.0f, 0.145f);
+        //? }
+
         level.addParticle(
-          new DustColorTransitionOptions(new Vector3f(0.733f, 0.0f, 1.0f), new Vector3f(0.106f, 0.0f, 0.145f), 1.4f),
+          new DustColorTransitionOptions(purpleStart, purpleEnd, 1.4f),
           x + dx, y, z + dz,
           0, 0, 0
         );
 
 
         level.addParticle(
-          new DustColorTransitionOptions(new Vector3f(0.733f, 0.0f, 1.0f), new Vector3f(0.106f, 0.0f, 0.145f), 1.4f),
+          new DustColorTransitionOptions(
+            purpleStart, purpleEnd, 1.4f),
           x - dx, y, z - dz,
           0, 0, 0
         );
@@ -128,13 +149,13 @@ public class AltarOfTheAccursedBlockEntity extends BlockEntity {
 
 
         level.addParticle(
-          new DustColorTransitionOptions(new Vector3f(0.733f, 0.0f, 1.0f), new Vector3f(0.106f, 0.0f, 0.145f), 1.4f),
+          new DustColorTransitionOptions(purpleStart, purpleEnd, 1.4f),
           x + dx, y, z + dz,
           0, 0, 0
         );
 
         level.addParticle(
-          new DustColorTransitionOptions(new Vector3f(0.733f, 0.0f, 1.0f), new Vector3f(0.106f, 0.0f, 0.145f), 1.4f),
+          new DustColorTransitionOptions(purpleStart, purpleEnd, 1.4f),
           x - dx, y, z - dz,
           0, 0, 0
         );

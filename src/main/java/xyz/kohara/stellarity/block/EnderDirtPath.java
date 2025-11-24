@@ -13,6 +13,10 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.MapColor;
 import org.jetbrains.annotations.NotNull;
 import xyz.kohara.stellarity.StellarityBlocks;
+//? > 1.21.1 {
+/*import net.minecraft.world.level.ScheduledTickAccess;
+import net.minecraft.util.RandomSource;
+*///? }
 
 public class EnderDirtPath extends DirtPathBlock {
   public EnderDirtPath(Properties properties) {
@@ -36,6 +40,7 @@ public class EnderDirtPath extends DirtPathBlock {
         super.getStateForPlacement(context);
   }
 
+  //? <= 1.21.1 {
   @Override
   public @NotNull BlockState updateShape(BlockState blockState, Direction direction, BlockState blockState2, LevelAccessor levelAccessor, BlockPos blockPos, BlockPos blockPos2) {
     if (direction == Direction.UP && !blockState.canSurvive(levelAccessor, blockPos)) {
@@ -44,6 +49,19 @@ public class EnderDirtPath extends DirtPathBlock {
 
     return super.updateShape(blockState, direction, blockState2, levelAccessor, blockPos, blockPos2);
   }
+  //? } else {
+/*
+  @Override
+  protected @NotNull BlockState updateShape(BlockState blockState, LevelReader levelReader, ScheduledTickAccess scheduledTickAccess, BlockPos blockPos, Direction direction, BlockPos blockPos2, BlockState blockState2, RandomSource randomSource) {
+    if (direction == Direction.UP && !blockState.canSurvive(levelReader, blockPos)) {
+      return StellarityBlocks.ENDER_DIRT.defaultBlockState();
+    }
+
+    return super.updateShape(blockState, levelReader, scheduledTickAccess, blockPos, direction, blockPos2, blockState2, randomSource);
+  }
+
+
+  *///? }
 
   @Override
   public boolean canSurvive(BlockState blockState, LevelReader levelReader, BlockPos blockPos) {
