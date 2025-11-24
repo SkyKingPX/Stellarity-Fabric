@@ -44,6 +44,7 @@ public class Stellarity implements ModInitializer {
 
     StellarityItems.init();
     StellarityBlocks.init();
+    StellarityBlockEntityTypes.init();
     StellarityCriteriaTriggers.init();
   }
 

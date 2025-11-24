@@ -1,10 +1,6 @@
 package xyz.kohara.stellarity.datagen;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParser;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
-
-
 
 import net.minecraft.world.item.Item;
 import xyz.kohara.stellarity.Stellarity;
@@ -68,7 +64,9 @@ public class ModelProvider extends FabricModelProvider {
   @Override
   public void generateBlockStateModels(BlockModelGenerators generators) {
     generators.createTrivialCube(StellarityBlocks.ENDER_DIRT);
-
+    generators.createTrivialCube(StellarityBlocks.ROOTED_ENDER_DIRT);
+    generators.createNonTemplateModelBlock(StellarityBlocks.ENDER_DIRT_PATH);
+    generators.createNonTemplateModelBlock(StellarityBlocks.ALTAR_OF_THE_ACCURSED);
 
     //? <= 1.21.1 {
     generators.createAxisAlignedPillarBlock(StellarityBlocks.ASHEN_FROGLIGHT, TexturedModel.COLUMN);
